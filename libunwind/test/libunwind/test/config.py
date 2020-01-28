@@ -69,6 +69,9 @@ class Configuration(LibcxxConfiguration):
     def configure_compile_flags_rtti(self):
         pass
 
+    def configure_filesystem_compile_flags(self):
+        pass
+
     def configure_link_flags_cxx_library(self):
         # libunwind tests should not link with libc++
         pass

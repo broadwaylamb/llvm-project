@@ -91,6 +91,9 @@ class Configuration(LibcxxConfiguration):
                                       % libunwind_headers)
             self.cxx.compile_flags += ['-I' + libunwind_headers]
 
+    def configure_filesystem_compile_flags(self):
+        pass
+
     def configure_compile_flags_exceptions(self):
         pass
 

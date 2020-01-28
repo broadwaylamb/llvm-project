@@ -10,6 +10,8 @@ import platform
 import os
 import posixpath
 import ntpath
+import tarfile
+import tempfile
 
 from libcxx.test import tracing
 from libcxx.util import executeCommand
@@ -46,6 +48,22 @@ class Executor(object):
             else:
                 result_env[k] = v
         return result_env
+    
+    def copy_test_inputs(self, inputs_dir):
+        """
+        If this is a remote executor, creates a temporary directory on
+        the remote host, copies the content of inputs_dir to that directory,
+        and returns the path to the remote directory.
+
+        Otherwise, returns inputs_dir itself.
+        """
+        return inputs_dir
+    
+    def makedirs(self, path):
+        # TODO: Add doc comment
+        if not os.path.exists(path):
+            os.makedirs(path)
+        return path
 
 
 class LocalExecutor(Executor):
@@ -122,6 +140,38 @@ class RemoteExecutor(Executor):
     def _remote_temp(self, is_dir):
         raise NotImplementedError()
 
+    def copy_test_inputs(self, inputs_dir):
+        remote_inputs_dir = self.remote_temp_dir()
+        inputs_dir_basename = os.path.basename(inputs_dir)
+        try:
+            f = tempfile.NamedTemporaryFile(prefix='libcxx.inputs.',
+                                            suffix='.tar',
+                                            delete=False)
+            tar_basename = os.path.basename(f.name)
+            tar_remote_path = \
+                self.target_info.os_path.join(remote_inputs_dir, tar_basename)
+            with tarfile.open(fileobj=f, mode='w') as tar:
+                tar.add(inputs_dir, arcname=inputs_dir_basename)
+            f.close()
+            self._copy_in_file(f.name, remote_inputs_dir)
+        finally:
+            os.remove(f.name)
+        
+        _, _, err, exit_code = self.execute_command_remote(['tar',
+                                                            '-xf',
+                                                            tar_remote_path,
+                                                            '-C',
+                                                            remote_inputs_dir])
+
+        if exit_code != 0:
+            raise RuntimeError(err)
+
+        return self.target_info.os_path.join(remote_inputs_dir,
+                                             inputs_dir_basename)
+    
+    def makedirs(self, path):
+        return self.remote_temp_dir()
+
     def copy_in(self, local_srcs, remote_dsts):
         # This could be wrapped up in a tar->scp->untar for performance
         # if there are lots of files to be copied/moved
@@ -144,10 +194,8 @@ class RemoteExecutor(Executor):
         try:
             target_cwd = self.remote_temp_dir()
             executable_name = 'libcxx_test.exe'
-            if self.target_info.is_windows():
-                target_exe_path = ntpath.join(target_cwd, executable_name)
-            else:
-                target_exe_path = posixpath.join(target_cwd, executable_name)
+            target_exe_path = \
+                self.target_info.os_path.join(target_cwd, executable_name)
 
             if cmd:
                 # Replace exe_path with target_exe_path.
@@ -216,7 +264,7 @@ class SSHExecutor(RemoteExecutor):
         scp = self.scp_command
         remote = self.host
         remote = self.user_prefix + remote
-        cmd = [scp, '-p', src, remote + ':' + dst]
+        cmd = [scp, '-p', '-r', src, remote + ':' + dst]
         self.local_run(cmd)
 
     def _export_command(self, env):

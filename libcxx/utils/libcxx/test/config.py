@@ -729,13 +729,16 @@ class Configuration(object):
                                   'input.output', 'filesystems', 'Inputs', 'static_test_env')
         static_env = os.path.realpath(static_env)
         assert os.path.isdir(static_env)
+
+        static_env = self.executor.copy_test_inputs(static_env)
+
         self.cxx.compile_flags += ['-DLIBCXX_FILESYSTEM_STATIC_TEST_ROOT="%s"' % static_env]
 
         dynamic_env = os.path.join(self.config.test_exec_root,
                                    'filesystem', 'Output', 'dynamic_env')
         dynamic_env = os.path.realpath(dynamic_env)
-        if not os.path.isdir(dynamic_env):
-            os.makedirs(dynamic_env)
+        dynamic_env = self.executor.makedirs(dynamic_env)
+
         self.cxx.compile_flags += ['-DLIBCXX_FILESYSTEM_DYNAMIC_TEST_ROOT="%s"' % dynamic_env]
         self.exec_env['LIBCXX_FILESYSTEM_DYNAMIC_TEST_ROOT'] = ("%s" % dynamic_env)
 
@@ -743,8 +746,13 @@ class Configuration(object):
                                       'filesystem_dynamic_test_helper.py')
         assert os.path.isfile(dynamic_helper)
 
+        if isinstance(self.executor, RemoteExecutor):
+            self.executor.copy_in([dynamic_helper], [static_env])
+            dynamic_helper = \
+                self.target_info.os_path.join(static_env, 'filesystem_dynamic_test_helper.py')
+
         self.cxx.compile_flags += ['-DLIBCXX_FILESYSTEM_DYNAMIC_TEST_HELPER="%s %s"'
-                                   % (sys.executable, dynamic_helper)]
+                                   % (self.target_info.python_executable(), dynamic_helper)]
 
 
     def configure_link_flags(self):

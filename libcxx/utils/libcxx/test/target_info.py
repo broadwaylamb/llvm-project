@@ -8,8 +8,10 @@
 
 import importlib
 import locale
+import ntpath
 import os
 import platform
+import posixpath
 import re
 import subprocess
 import sys
@@ -29,6 +31,27 @@ class DefaultTargetInfo(object):
 
     def is_darwin(self):
         return self.platform() == 'darwin'
+
+    def python_executable(self):
+        return sys.executable
+    
+    @property
+    def os_path(self):
+        """
+        Returns either the `ntpath` module, or `posixpath` module.
+
+        Use this method for manipulating target-specific paths instead of
+        `os.path`, which is host-specific.
+
+        For example, use:
+
+            target_info.os_path().join(root, 'main.cpp')
+
+        instead of:
+
+            os.path.join(root, 'main.cpp')
+        """
+        return ntpath if self.is_windows() else posixpath
 
     def add_locale_features(self, features):
         self.full_config.lit_config.warning(
@@ -281,6 +304,16 @@ class LinuxRemoteTI(LinuxLocalTI):
     def __init__(self, full_config):
         super(LinuxRemoteTI, self).__init__(full_config)
         self.__cached_locales = None
+        self.__cached_python_executable = None
+    
+    def python_executable(self):
+        if self.__cached_python_executable is None:
+            self.full_config.lit_config.note('asking the remote host for Python executable...')
+            _, out, err, exit_code = self.executor.execute_command_remote(['which', 'python'])
+            self.__cached_python_executable = out.strip()
+            if exit_code != 0:
+                raise RuntimeError(err)
+        return self.__cached_python_executable
     
     def _test_locale(self, loc):
         if self.__cached_locales is None:
