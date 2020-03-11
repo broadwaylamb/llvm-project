@@ -1,0 +1,380 @@
+File: output.o
+Format: ELF32-arm-little
+Arch: arm
+AddressSize: 32bit
+LoadName: <Not found>
+Sections [
+  Section {
+    Index: 0
+    Name:  (0)
+    Type: SHT_NULL (0x0)
+    Flags [ (0x0)
+    ]
+    Address: 0x0
+    Offset: 0x0
+    Size: 0
+    Link: 0
+    Info: 0
+    AddressAlignment: 0
+    EntrySize: 0
+    Relocations [
+    ]
+    SectionData (
+    )
+  }
+  Section {
+    Index: 1
+    Name: .strtab (265)
+    Type: SHT_STRTAB (0x3)
+    Flags [ (0x0)
+    ]
+    Address: 0x0
+    Offset: 0x4DB
+    Size: 356
+    Link: 0
+    Info: 0
+    AddressAlignment: 1
+    EntrySize: 0
+    Relocations [
+    ]
+    SectionData (
+      0000: 002E7265 6C2E4152 4D2E6578 69647800  |..rel.ARM.exidx.|
+      0010: 5F5A3134 74657374 5F626163 6B747261  |_Z14test_backtra|
+      0020: 63657600 5F5A3863 616C6C62 61636B50  |cev._Z8callbackP|
+      0030: 31355F55 6E77696E 645F436F 6E746578  |15_Unwind_Contex|
+      0040: 74507600 5F5A3474 65737450 76002E72  |tPv._Z4testPv..r|
+      0050: 656C2E74 65787400 61626F72 74002E63  |el.text.abort..c|
+      0060: 6F6D6D65 6E74002E 41524D2E 61747472  |omment..ARM.attr|
+      0070: 69627574 6573002E 4C2E7374 72007065  |ibutes..L.str.pe|
+      0080: 72736F6E 616C6974 79696E64 65782E70  |rsonalityindex.p|
+      0090: 6173732E 63707000 2E4C5F5F 50524554  |ass.cpp..L__PRET|
+      00A0: 54595F46 554E4354 494F4E5F 5F2E6D61  |TY_FUNCTION__.ma|
+      00B0: 696E005F 5F617373 6572745F 6661696C  |in.__assert_fail|
+      00C0: 002E6E6F 74652E47 4E552D73 7461636B  |..note.GNU-stack|
+      00D0: 0063616C 6C5F7468 726F7567 68002E6C  |.call_through..l|
+      00E0: 6C766D5F 61646472 73696700 5F556E77  |lvm_addrsig._Unw|
+      00F0: 696E645F 4261636B 74726163 65002E41  |ind_Backtrace..A|
+      0100: 524D2E65 78746162 002E7374 72746162  |RM.extab..strtab|
+      0110: 002E7379 6D746162 005F5F61 65616269  |..symtab.__aeabi|
+      0120: 5F756E77 696E645F 6370705F 70723200  |_unwind_cpp_pr2.|
+      0130: 2E4C2E73 74722E31 002E726F 64617461  |.L.str.1..rodata|
+      0140: 2E737472 312E3100 5F5F6165 6162695F  |.str1.1.__aeabi_|
+      0150: 756E7769 6E645F63 70705F70 72300024  |unwind_cpp_pr0.$|
+      0160: 612E3000                             |a.0.|
+    )
+  }
+  Section {
+    Index: 2
+    Name: .text (82)
+    Type: SHT_PROGBITS (0x1)
+    Flags [ (0x6)
+      SHF_ALLOC (0x2)
+      SHF_EXECINSTR (0x4)
+    ]
+    Address: 0x0
+    Offset: 0x34
+    Size: 392
+    Link: 0
+    Info: 0
+    AddressAlignment: 4
+    EntrySize: 0
+    Relocations [
+    ]
+    SectionData (
+      0000: 00482DE9 0DB0A0E1 0020A0E1 0100A0E1  |.H-...... ......|
+      0010: 32FF2FE1 0088BDE8 00482DE9 0DB0A0E1  |2./......H-.....|
+      0020: 10D04DE2 04000BE5 08108DE5 08009DE5  |..M.............|
+      0030: 04008DE5 04009DE5 001090E5 011081E2  |................|
+      0040: 001080E5 04009DE5 000090E5 640050E3  |............d.P.|
+      0050: 000000DA FEFFFFEB 000000E3 0BD0A0E1  |................|
+      0060: 0088BDE8 00482DE9 0DB0A0E1 08D04DE2  |.....H-.......M.|
+      0070: 000000E3 04008DE5 04008DE2 001000E3  |................|
+      0080: 001040E3 00008DE5 0100A0E1 00109DE5  |..@.............|
+      0090: FEFFFFEB 04109DE5 320051E3 000000AA  |........2.Q.....|
+      00A0: FEFFFFEB 0BD0A0E1 0088BDE8 00482DE9  |.............H-.|
+      00B0: 0DB0A0E1 10D04DE2 04000BE5 04001BE5  |......M.........|
+      00C0: 08008DE5 08009DE5 000090E5 000050E3  |..............P.|
+      00D0: 0100001A FEFFFFEB 0F0000EA 08009DE5  |................|
+      00E0: 000090E5 010040E2 04008DE5 04008DE2  |......@.........|
+      00F0: 001000E3 001040E3 00008DE5 0100A0E1  |......@.........|
+      0100: 00109DE5 FEFFFFEB 04009DE5 08109DE5  |................|
+      0110: 002091E5 000082E0 000081E5 0BD0A0E1  |. ..............|
+      0120: 0088BDE8 00482DE9 0DB0A0E1 08D04DE2  |.....H-.......M.|
+      0130: 000000E3 04008DE5 320000E3 00008DE5  |........2.......|
+      0140: 0D00A0E1 FEFFFFEB 00009DE5 FB1400E3  |................|
+      0150: 010050E1 0000001A 070000EA 000000E3  |..P.............|
+      0160: 000040E3 001000E3 001040E3 4C2000E3  |..@.......@.L ..|
+      0170: 003000E3 003040E3 FEFFFFEB 04009DE5  |.0...0@.........|
+      0180: 0BD0A0E1 0088BDE8                    |........|
+    )
+  }
+  Section {
+    Index: 3
+    Name: .rel.text (78)
+    Type: SHT_REL (0x9)
+    Flags [ (0x0)
+    ]
+    Address: 0x0
+    Offset: 0x3FC
+    Size: 136
+    Link: 12
+    Info: 2
+    AddressAlignment: 4
+    EntrySize: 8
+    Relocations [
+      0x54 R_ARM_CALL abort 0x0
+      0x7C R_ARM_MOVW_ABS_NC _Z8callbackP15_Unwind_ContextPv 0x0
+      0x80 R_ARM_MOVT_ABS _Z8callbackP15_Unwind_ContextPv 0x0
+      0x90 R_ARM_CALL _Unwind_Backtrace 0x0
+      0xA0 R_ARM_CALL abort 0x0
+      0xD4 R_ARM_CALL _Z14test_backtracev 0x0
+      0xF0 R_ARM_MOVW_ABS_NC _Z4testPv 0x0
+      0xF4 R_ARM_MOVT_ABS _Z4testPv 0x0
+      0x104 R_ARM_CALL call_through 0x0
+      0x144 R_ARM_CALL _Z4testPv 0x0
+      0x15C R_ARM_MOVW_ABS_NC .L.str 0x0
+      0x160 R_ARM_MOVT_ABS .L.str 0x0
+      0x164 R_ARM_MOVW_ABS_NC .L.str.1 0x0
+      0x168 R_ARM_MOVT_ABS .L.str.1 0x0
+      0x170 R_ARM_MOVW_ABS_NC .L__PRETTY_FUNCTION__.main 0x0
+      0x174 R_ARM_MOVT_ABS .L__PRETTY_FUNCTION__.main 0x0
+      0x178 R_ARM_CALL __assert_fail 0x0
+    ]
+    SectionData (
+      0000: 54000000 1C0F0000 7C000000 2B0B0000  |T.......|...+...|
+      0010: 80000000 2C0B0000 90000000 1C080000  |....,...........|
+      0020: A0000000 1C0F0000 D4000000 1C090000  |................|
+      0030: F0000000 2B0A0000 F4000000 2C0A0000  |....+.......,...|
+      0040: 04010000 1C100000 44010000 1C0A0000  |........D.......|
+      0050: 5C010000 2B030000 60010000 2C030000  |\...+...`...,...|
+      0060: 64010000 2B040000 68010000 2C040000  |d...+...h...,...|
+      0070: 70010000 2B050000 74010000 2C050000  |p...+...t...,...|
+      0080: 78010000 1C0E0000                    |x.......|
+    )
+  }
+  Section {
+    Index: 4
+    Name: .ARM.extab (254)
+    Type: SHT_PROGBITS (0x1)
+    Flags [ (0x2)
+      SHF_ALLOC (0x2)
+    ]
+    Address: 0x0
+    Offset: 0x1BC
+    Size: 12
+    Link: 0
+    Info: 0
+    AddressAlignment: 4
+    EntrySize: 0
+    Relocations [
+    ]
+    SectionData (
+      0000: 849B0182 B0B0B080 00000000           |............|
+    )
+  }
+  Section {
+    Index: 5
+    Name: .ARM.exidx (5)
+    Type: SHT_ARM_EXIDX (0x70000001)
+    Flags [ (0x82)
+      SHF_ALLOC (0x2)
+      SHF_LINK_ORDER (0x80)
+    ]
+    Address: 0x0
+    Offset: 0x1C8
+    Size: 40
+    Link: 2
+    Info: 0
+    AddressAlignment: 4
+    EntrySize: 0
+    Relocations [
+    ]
+    SectionData (
+      0000: 00000000 00000000 18000000 01000000  |................|
+      0010: 64000000 80849B80 AC000000 80849B80  |d...............|
+      0020: 24010000 80849B80                    |$.......|
+    )
+  }
+  Section {
+    Index: 6
+    Name: .rel.ARM.exidx (1)
+    Type: SHT_REL (0x9)
+    Flags [ (0x0)
+    ]
+    Address: 0x0
+    Offset: 0x484
+    Size: 80
+    Link: 12
+    Info: 5
+    AddressAlignment: 4
+    EntrySize: 8
+    Relocations [
+      0x0 R_ARM_NONE __aeabi_unwind_cpp_pr2 0x0
+      0x0 R_ARM_PREL31 .text 0x0
+      0x4 R_ARM_PREL31 .ARM.extab 0x0
+      0x8 R_ARM_PREL31 .text 0x0
+      0x10 R_ARM_NONE __aeabi_unwind_cpp_pr0 0x0
+      0x10 R_ARM_PREL31 .text 0x0
+      0x18 R_ARM_NONE __aeabi_unwind_cpp_pr0 0x0
+      0x18 R_ARM_PREL31 .text 0x0
+      0x20 R_ARM_NONE __aeabi_unwind_cpp_pr0 0x0
+      0x20 R_ARM_PREL31 .text 0x0
+    ]
+    SectionData (
+      0000: 00000000 000D0000 00000000 2A060000  |............*...|
+      0010: 04000000 2A070000 08000000 2A060000  |....*.......*...|
+      0020: 10000000 000C0000 10000000 2A060000  |............*...|
+      0030: 18000000 000C0000 18000000 2A060000  |............*...|
+      0040: 20000000 000C0000 20000000 2A060000  | ....... ...*...|
+    )
+  }
+  Section {
+    Index: 7
+    Name: .rodata.str1.1 (313)
+    Type: SHT_PROGBITS (0x1)
+    Flags [ (0x32)
+      SHF_ALLOC (0x2)
+      SHF_MERGE (0x10)
+      SHF_STRINGS (0x20)
+    ]
+    Address: 0x0
+    Offset: 0x1F0
+    Size: 65
+    Link: 0
+    Info: 0
+    AddressAlignment: 1
+    EntrySize: 1
+    Relocations [
+    ]
+    SectionData (
+      0000: 6E203D3D 20313237 35002E2E 5C6C6962  |n == 1275...\lib|
+      0010: 756E7769 6E645C74 6573745C 70657273  |unwind\test\pers|
+      0020: 6F6E616C 69747969 6E646578 2E706173  |onalityindex.pas|
+      0030: 732E6370 7000696E 74206D61 696E2829  |s.cpp.int main()|
+      0040: 00                                   |.|
+    )
+  }
+  Section {
+    Index: 8
+    Name: .comment (94)
+    Type: SHT_PROGBITS (0x1)
+    Flags [ (0x30)
+      SHF_MERGE (0x10)
+      SHF_STRINGS (0x20)
+    ]
+    Address: 0x0
+    Offset: 0x231
+    Size: 110
+    Link: 0
+    Info: 0
+    AddressAlignment: 1
+    EntrySize: 1
+    Relocations [
+    ]
+    SectionData (
+      0000: 00636C61 6E672076 65727369 6F6E2031  |.clang version 1|
+      0010: 312E302E 30202867 69744067 69746875  |1.0.0 (git@githu|
+      0020: 622E636F 6D3A6272 6F616477 61796C61  |b.com:broadwayla|
+      0030: 6D622F6C 6C766D2D 70726F6A 6563742E  |mb/llvm-project.|
+      0040: 67697420 34353434 31303939 66356135  |git 45441099f5a5|
+      0050: 33333264 37323136 65373062 33616339  |332d7216e70b3ac9|
+      0060: 31613432 39353533 66376566 2900      |1a429553f7ef).|
+    )
+  }
+  Section {
+    Index: 9
+    Name: .note.GNU-stack (193)
+    Type: SHT_PROGBITS (0x1)
+    Flags [ (0x0)
+    ]
+    Address: 0x0
+    Offset: 0x29F
+    Size: 0
+    Link: 0
+    Info: 0
+    AddressAlignment: 1
+    EntrySize: 0
+    Relocations [
+    ]
+    SectionData (
+    )
+  }
+  Section {
+    Index: 10
+    Name: .ARM.attributes (103)
+    Type: SHT_ARM_ATTRIBUTES (0x70000003)
+    Flags [ (0x0)
+    ]
+    Address: 0x0
+    Offset: 0x29F
+    Size: 60
+    Link: 0
+    Info: 0
+    AddressAlignment: 1
+    EntrySize: 0
+    Relocations [
+    ]
+    SectionData (
+      0000: 413B0000 00616561 62690001 31000000  |A;...aeabi..1...|
+      0010: 43322E30 3900060A 07410801 09020A03  |C2.09....A......|
+      0020: 0C010E00 11011204 14011500 17031801  |................|
+      0030: 19011A02 1C011E06 22012601           |........".&.|
+    )
+  }
+  Section {
+    Index: 11
+    Name: .llvm_addrsig (222)
+    Type: SHT_LLVM_ADDRSIG (0x6FFF4C03)
+    Flags [ (0x80000000)
+      SHF_EXCLUDE (0x80000000)
+    ]
+    Address: 0x0
+    Offset: 0x4D4
+    Size: 7
+    Link: 12
+    Info: 0
+    AddressAlignment: 1
+    EntrySize: 0
+    Relocations [
+    ]
+    SectionData (
+      0000: 0B0F0908 0A100E                      |.......|
+    )
+  }
+  Section {
+    Index: 12
+    Name: .symtab (273)
+    Type: SHT_SYMTAB (0x2)
+    Flags [ (0x0)
+    ]
+    Address: 0x0
+    Offset: 0x2DC
+    Size: 288
+    Link: 1
+    Info: 8
+    AddressAlignment: 4
+    EntrySize: 16
+    Relocations [
+    ]
+    SectionData (
+      0000: 00000000 00000000 00000000 00000000  |................|
+      0010: 7E000000 00000000 00000000 0400F1FF  |~...............|
+      0020: 5F010000 00000000 00000000 00000200  |_...............|
+      0030: 77000000 00000000 0A000000 01000700  |w...............|
+      0040: 30010000 0A000000 2C000000 01000700  |0.......,.......|
+      0050: 98000000 36000000 0B000000 01000700  |....6...........|
+      0060: 00000000 00000000 00000000 03000200  |................|
+      0070: 00000000 00000000 00000000 03000400  |................|
+      0080: EC000000 00000000 00000000 10000000  |................|
+      0090: 10000000 64000000 48000000 12000200  |....d...H.......|
+      00A0: 44000000 AC000000 78000000 12000200  |D.......x.......|
+      00B0: 24000000 18000000 4C000000 12000200  |$.......L.......|
+      00C0: 48010000 00000000 00000000 10000000  |H...............|
+      00D0: 19010000 00000000 00000000 10000000  |................|
+      00E0: B3000000 00000000 00000000 10000000  |................|
+      00F0: 58000000 00000000 00000000 10000000  |X...............|
+      0100: D1000000 00000000 18000000 12000200  |................|
+      0110: AE000000 24010000 64000000 12000200  |....$...d.......|
+    )
+  }
+]

@@ -75,11 +75,19 @@ _Unwind_Reason_Code ProcessDescriptors(
     Descriptor::Format format,
     const char* descriptorStart,
     uint32_t flags) {
+  
+  _LIBUNWIND_TRACE_UNWINDING("calling ProcessDescriptors\n"
+                             "    state: %" PRIu32 "\n"
+                             "    flags: %" PRIu32 "\n"
+                             "    format: %" PRIu32 "\n",
+                             state,
+                             flags,
+                             format);
 
   // EHT is inlined in the index using compact form. No descriptors. #5
   if (flags & 0x1)
     return _URC_CONTINUE_UNWIND;
-
+  
   // TODO: We should check the state here, and determine whether we need to
   // perform phase1 or phase2 unwinding.
   (void)state;
@@ -87,17 +95,24 @@ _Unwind_Reason_Code ProcessDescriptors(
   const char* descriptor = descriptorStart;
   uint32_t descriptorWord;
   getNextWord(descriptor, &descriptorWord);
+
+  _LIBUNWIND_TRACE_UNWINDING("descriptorWord == %" PRIu32, descriptorWord);
+
   while (descriptorWord) {
     // Read descriptor based on # 9.2.
     uint32_t length;
     uint32_t offset;
     switch (format) {
       case Descriptor::LU32:
+        _LIBUNWIND_TRACE_UNWINDING("using Descriptor::LU32", 0);
         descriptor = getNextWord(descriptor, &length);
         descriptor = getNextWord(descriptor, &offset);
+        break;
       case Descriptor::LU16:
+        _LIBUNWIND_TRACE_UNWINDING("using Descriptor::LU16", 0);
         descriptor = getNextNibble(descriptor, &length);
         descriptor = getNextNibble(descriptor, &offset);
+        break;
       default:
         assert(false);
         return _URC_FAILURE;
@@ -106,6 +121,8 @@ _Unwind_Reason_Code ProcessDescriptors(
     // See # 9.2 table for decoding the kind of descriptor. It's a 2-bit value.
     Descriptor::Kind kind =
         static_cast<Descriptor::Kind>((length & 0x1) | ((offset & 0x1) << 1));
+
+    _LIBUNWIND_TRACE_UNWINDING("discriptor kind = %u", kind);
 
     // Clear off flag from last bit.
     length &= ~1u;
@@ -421,18 +438,21 @@ _Unwind_VRS_Interpret(_Unwind_Context *context, const uint32_t *data,
 extern "C" _LIBUNWIND_EXPORT _Unwind_Reason_Code
 __aeabi_unwind_cpp_pr0(_Unwind_State state, _Unwind_Control_Block *ucbp,
                        _Unwind_Context *context) {
+  fprintf(stderr, "calling __aeabi_unwind_cpp_pr0\n");
   return unwindOneFrame(state, ucbp, context);
 }
 
 extern "C" _LIBUNWIND_EXPORT _Unwind_Reason_Code
 __aeabi_unwind_cpp_pr1(_Unwind_State state, _Unwind_Control_Block *ucbp,
                        _Unwind_Context *context) {
+  fprintf(stderr, "calling __aeabi_unwind_cpp_pr1\n");
   return unwindOneFrame(state, ucbp, context);
 }
 
 extern "C" _LIBUNWIND_EXPORT _Unwind_Reason_Code
 __aeabi_unwind_cpp_pr2(_Unwind_State state, _Unwind_Control_Block *ucbp,
                        _Unwind_Context *context) {
+  fprintf(stderr, "calling __aeabi_unwind_cpp_pr2\n");
   return unwindOneFrame(state, ucbp, context);
 }
 

@@ -31,7 +31,7 @@ def to_string(bytes):
 
 def convert_string(bytes):
     try:
-        return to_string(bytes.decode('utf-8'))
+        return to_string(bytes.decode('utf-8', 'replace'))
     except AttributeError: # 'str' object has no attribute 'decode'.
         return str(bytes)
     except UnicodeError:

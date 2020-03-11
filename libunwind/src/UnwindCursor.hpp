@@ -1358,6 +1358,7 @@ bool UnwindCursor<A, R>::getInfoFromEHABISection(
   pint_t exceptionTableAddr;
   uint32_t exceptionTableData;
   bool isSingleWordEHT;
+  _LIBUNWIND_TRACE_UNWINDING("indexData == 0x%08" PRIX32, indexData);
   if (indexData & 0x80000000) {
     exceptionTableAddr = indexDataAddr;
     // TODO(ajwong): Should this data be 0?
@@ -1368,6 +1369,8 @@ bool UnwindCursor<A, R>::getInfoFromEHABISection(
     exceptionTableData = _addressSpace.get32(exceptionTableAddr);
     isSingleWordEHT = false;
   }
+  _LIBUNWIND_TRACE_UNWINDING("exceptionTableData == 0x%08" PRIX32,
+                             exceptionTableData);
 
   // Now we know the 3 things:
   //   exceptionTableAddr -- exception handler table entry.
@@ -1406,6 +1409,11 @@ bool UnwindCursor<A, R>::getInfoFromEHABISection(
         _LIBUNWIND_ABORT("unknown personality routine");
         return false;
     }
+
+    _LIBUNWIND_TRACE_UNWINDING("extraWords == %" PRIu32
+                               ", offset from exceptionTableAddr: %" PRIu32
+                               " bytes",
+                               extraWords, (extraWords + 1) * 4);
 
     if (isSingleWordEHT) {
       if (extraWords != 0) {

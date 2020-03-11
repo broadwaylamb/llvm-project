@@ -71,6 +71,8 @@ class Configuration(object):
         self.link_shared = self.get_lit_bool('enable_shared', default=True)
         self.debug_build = self.get_lit_bool('debug_build',   default=False)
         self.exec_env = dict()
+        self.exec_env['LIBUNWIND_PRINT_UNWINDING'] = 'YES'
+        self.exec_env['LIBUNWIND_PRINT_APIS'] = 'YES'
         self.use_target = False
         self.use_system_cxx_lib = False
         self.use_clang_verify = False
