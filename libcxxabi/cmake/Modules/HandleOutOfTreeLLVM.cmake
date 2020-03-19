@@ -124,7 +124,13 @@ macro(configure_out_of_tree_llvm)
     if (MSVC OR XCODE)
       set(LIT_ARGS_DEFAULT "${LIT_ARGS_DEFAULT} --no-progress-bar")
     endif()
-    set(LLVM_LIT_ARGS "${LIT_ARGS_DEFAULT}" CACHE STRING "Default options for lit")
+    
+    if (DEFINED LIBCXXABI_LIT_ARGS)
+      # libc++abi-specific LIT args always win over generic LIT args
+      set(LLVM_LIT_ARGS "${LIBCXXABI_LIT_ARGS}")
+    endif()
+    set(LIBCXXABI_LIT_ARGS "${LIT_ARGS_DEFAULT}"   CACHE STRING "libc++abi-specific options for lit")
+    set(LLVM_LIT_ARGS      "${LIBCXXABI_LIT_ARGS}" CACHE STRING "Default options for lit")
   endif()
 
   # Required doc configuration
