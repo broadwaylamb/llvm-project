@@ -8,9 +8,8 @@
 import os
 import sys
 
-from libcxx.test.config import Configuration as LibcxxConfiguration
-from libcxx.test.config import intMacroValue
-
+from libcxx.test.baseconfig import Configuration as LibcxxConfiguration
+from libcxx.test.baseconfig import intMacroValue
 
 class Configuration(LibcxxConfiguration):
     # pylint: disable=redefined-outer-name

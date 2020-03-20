@@ -8,7 +8,7 @@
 import os
 import sys
 
-from libcxx.test.config import Configuration as LibcxxConfiguration
+from libcxx.test.baseconfig import Configuration as LibcxxConfiguration
 
 
 class Configuration(LibcxxConfiguration):
