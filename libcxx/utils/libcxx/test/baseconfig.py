@@ -54,7 +54,13 @@ def loadSiteConfig(lit_config, config, param_name, env_name):
 def intMacroValue(token):
     return int(token.rstrip('LlUu'))
 
-class Configuration(object):
+class BaseConfiguration(object):
+    """
+    This is an abstract class that is subclassed in libc++, libc++abi and
+    libunwind test suites to provide a common infrastructure for setting up
+    the compiler flags, search paths and execution environment.
+    """
+
     # pylint: disable=redefined-outer-name
     def __init__(self, lit_config, config):
         self.lit_config = lit_config
@@ -111,11 +117,6 @@ class Configuration(object):
             return check_value(val, env_var)
         return check_value(conf_val, name)
 
-    def get_modules_enabled(self):
-        return self.get_lit_bool('enable_modules',
-                                default=False,
-                                env_var='LIBCXX_ENABLE_MODULES')
-
     def make_static_lib_name(self, name):
         """Return the full filename for the specified library name"""
         if self.target_info.is_windows():
@@ -123,8 +124,16 @@ class Configuration(object):
             return 'lib' + name + '.lib'
         else:
             return 'lib' + name + '.a'
+    
+    def has_cpp_feature(self, feature, required_value):
+        return intMacroValue(self.cxx.dumpMacros().get('__cpp_' + feature, '0')) >= required_value
 
     def configure(self):
+        """
+        Sets up the executor, various flags and search paths needed for building
+        the tests, as well as the execution environment and LIT features.
+        This method is called by lit.cfg files.
+        """
         self.configure_target_info()
         self.configure_executor()
         self.configure_use_system_cxx_lib()
@@ -140,16 +149,12 @@ class Configuration(object):
         self.configure_execute_external()
         self.configure_ccache()
         self.configure_compile_flags()
-        self.configure_filesystem_compile_flags()
         self.configure_link_flags()
         self.configure_env()
         self.configure_color_diagnostics()
-        self.configure_debug_mode()
         self.configure_warnings()
         self.configure_sanitizer()
         self.configure_coverage()
-        self.configure_modules()
-        self.configure_coroutines()
         self.configure_substitutions()
         self.configure_features()
 
@@ -279,8 +284,7 @@ class Configuration(object):
         return macros_or_error
 
     def configure_src_root(self):
-        self.libcxx_src_root = self.get_lit_conf(
-            'libcxx_src_root', os.path.dirname(self.config.test_source_root))
+        pass
 
     def configure_obj_root(self):
         self.project_obj_root = self.get_lit_conf('project_obj_root')
@@ -391,7 +395,6 @@ class Configuration(object):
         if additional_features:
             for f in additional_features.split(','):
                 self.config.available_features.add(f.strip())
-        self.target_info.add_locale_features(self.config.available_features)
 
         target_platform = self.target_info.platform()
 
@@ -605,40 +608,7 @@ class Configuration(object):
         self.cxx.addCompileFlagIfSupported('-ftemplate-depth=270')
 
     def configure_compile_flags_header_includes(self):
-        support_path = os.path.join(self.libcxx_src_root, 'test', 'support')
-        self.configure_config_site_header()
-        if self.cxx_stdlib_under_test != 'libstdc++' and \
-           not self.target_info.is_windows():
-            self.cxx.compile_flags += [
-                '-include', os.path.join(support_path, 'nasty_macros.h')]
-        if self.cxx_stdlib_under_test == 'msvc':
-            self.cxx.compile_flags += [
-                '-include', os.path.join(support_path,
-                                         'msvc_stdlib_force_include.h')]
-            pass
-        if self.target_info.is_windows() and self.debug_build and \
-                self.cxx_stdlib_under_test != 'msvc':
-            self.cxx.compile_flags += [
-                '-include', os.path.join(support_path,
-                                         'set_windows_crt_report_mode.h')
-            ]
-        cxx_headers = self.get_lit_conf('cxx_headers')
-        if cxx_headers == '' or (cxx_headers is None
-                                 and self.cxx_stdlib_under_test != 'libc++'):
-            self.lit_config.note('using the system cxx headers')
-            return
-        self.cxx.compile_flags += ['-nostdinc++']
-        if cxx_headers is None:
-            cxx_headers = os.path.join(self.libcxx_src_root, 'include')
-        if not os.path.isdir(cxx_headers):
-            self.lit_config.fatal("cxx_headers='%s' is not a directory."
-                                  % cxx_headers)
-        self.cxx.compile_flags += ['-I' + cxx_headers]
-        if self.libcxx_obj_root is not None:
-            cxxabi_headers = os.path.join(self.libcxx_obj_root, 'include',
-                                          'c++build')
-            if os.path.isdir(cxxabi_headers):
-                self.cxx.compile_flags += ['-I' + cxxabi_headers]
+        pass
 
     def configure_config_site_header(self):
         # Check for a possible __config_site in the build directory. We
@@ -703,19 +673,11 @@ class Configuration(object):
             self.config.available_features.add(m)
         return feature_macros
 
-
-
     def configure_compile_flags_exceptions(self):
-        enable_exceptions = self.get_lit_bool('enable_exceptions', True)
-        if not enable_exceptions:
-            self.config.available_features.add('libcpp-no-exceptions')
-            self.cxx.compile_flags += ['-fno-exceptions']
+        pass
 
     def configure_compile_flags_rtti(self):
-        enable_rtti = self.get_lit_bool('enable_rtti', True)
-        if not enable_rtti:
-            self.config.available_features.add('libcpp-no-rtti')
-            self.cxx.compile_flags += ['-fno-rtti', '-D_LIBCPP_NO_RTTI']
+        pass
 
     def configure_compile_flags_abi_version(self):
         abi_version = self.get_lit_conf('abi_version', '').strip()
@@ -727,28 +689,6 @@ class Configuration(object):
         if abi_unstable:
           self.config.available_features.add('libcpp-abi-unstable')
           self.cxx.compile_flags += ['-D_LIBCPP_ABI_UNSTABLE']
-
-    def configure_filesystem_compile_flags(self):
-        static_env = os.path.join(self.libcxx_src_root, 'test', 'std',
-                                  'input.output', 'filesystems', 'Inputs', 'static_test_env')
-        static_env = os.path.realpath(static_env)
-        assert os.path.isdir(static_env)
-        self.cxx.compile_flags += ['-DLIBCXX_FILESYSTEM_STATIC_TEST_ROOT="%s"' % static_env]
-
-        dynamic_env = os.path.join(self.config.test_exec_root,
-                                   'filesystem', 'Output', 'dynamic_env')
-        dynamic_env = os.path.realpath(dynamic_env)
-        if not os.path.isdir(dynamic_env):
-            os.makedirs(dynamic_env)
-        self.cxx.compile_flags += ['-DLIBCXX_FILESYSTEM_DYNAMIC_TEST_ROOT="%s"' % dynamic_env]
-        self.exec_env['LIBCXX_FILESYSTEM_DYNAMIC_TEST_ROOT'] = ("%s" % dynamic_env)
-
-        dynamic_helper = os.path.join(self.libcxx_src_root, 'test', 'support',
-                                      'filesystem_dynamic_test_helper.py')
-        assert os.path.isfile(dynamic_helper)
-
-        self.cxx.compile_flags += ['-DLIBCXX_FILESYSTEM_DYNAMIC_TEST_HELPER="%s %s"'
-                                   % (sys.executable, dynamic_helper)]
 
 
     def configure_link_flags(self):
@@ -891,15 +831,6 @@ class Configuration(object):
         else:
             self.cxx.flags += [color_flag]
 
-    def configure_debug_mode(self):
-        debug_level = self.get_lit_conf('debug_level', None)
-        if not debug_level:
-            return
-        if debug_level not in ['0', '1']:
-            self.lit_config.fatal('Invalid value for debug_level "%s".'
-                                  % debug_level)
-        self.cxx.compile_flags += ['-D_LIBCPP_DEBUG=%s' % debug_level]
-
     def configure_warnings(self):
         # Turn on warnings by default for Clang based compilers when C++ >= 11
         default_enable_warnings = self.cxx.type in ['clang', 'apple-clang'] \
@@ -1002,41 +933,6 @@ class Configuration(object):
         if self.generate_coverage:
             self.cxx.flags += ['-g', '--coverage']
             self.cxx.compile_flags += ['-O0']
-
-    def configure_coroutines(self):
-        if self.cxx.hasCompileFlag('-fcoroutines-ts'):
-            macros = self._dump_macros_verbose(flags=['-fcoroutines-ts'])
-            if '__cpp_coroutines' not in macros:
-                self.lit_config.warning('-fcoroutines-ts is supported but '
-                    '__cpp_coroutines is not defined')
-            # Consider coroutines supported only when the feature test macro
-            # reflects a recent value.
-            if intMacroValue(macros['__cpp_coroutines']) >= 201703:
-                self.config.available_features.add('fcoroutines-ts')
-
-    def configure_modules(self):
-        modules_flags = ['-fmodules']
-        if not self.target_info.is_darwin():
-            modules_flags += ['-Xclang', '-fmodules-local-submodule-visibility']
-        supports_modules = self.cxx.hasCompileFlag(modules_flags)
-        enable_modules = self.get_modules_enabled()
-        if enable_modules and not supports_modules:
-            self.lit_config.fatal(
-                '-fmodules is enabled but not supported by the compiler')
-        if not supports_modules:
-            return
-        self.config.available_features.add('modules-support')
-        module_cache = os.path.join(self.config.test_exec_root,
-                                   'modules.cache')
-        module_cache = os.path.realpath(module_cache)
-        if os.path.isdir(module_cache):
-            shutil.rmtree(module_cache)
-        os.makedirs(module_cache)
-        self.cxx.modules_flags += modules_flags + \
-            ['-fmodules-cache-path=' + module_cache]
-        if enable_modules:
-            self.config.available_features.add('-fmodules')
-            self.cxx.useModules()
 
     def configure_substitutions(self):
         tool_env = ''
@@ -1141,7 +1037,7 @@ class Configuration(object):
             self.config.target_triple = target_triple
             self.lit_config.note(
                 "inferred target_triple as: %r" % self.config.target_triple)
-
+    
     def configure_deployment(self):
         assert not self.use_deployment is None
         assert not self.use_target is None

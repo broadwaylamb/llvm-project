@@ -8,10 +8,9 @@
 import os
 import sys
 
-from libcxx.test.baseconfig import Configuration as LibcxxConfiguration
-from libcxx.test.baseconfig import intMacroValue
+from libcxx.test.baseconfig import BaseConfiguration
 
-class Configuration(LibcxxConfiguration):
+class Configuration(BaseConfiguration):
     # pylint: disable=redefined-outer-name
     def __init__(self, lit_config, config):
         super(Configuration, self).__init__(lit_config, config)
@@ -31,9 +30,6 @@ class Configuration(LibcxxConfiguration):
     def configure_obj_root(self):
         self.libcxxabi_obj_root = self.get_lit_conf('libcxxabi_obj_root')
         super(Configuration, self).configure_obj_root()
-
-    def has_cpp_feature(self, feature, required_value):
-        return intMacroValue(self.cxx.dumpMacros().get('__cpp_' + feature, '0')) >= required_value
 
     def configure_features(self):
         super(Configuration, self).configure_features()
@@ -89,9 +85,3 @@ class Configuration(LibcxxConfiguration):
                 self.lit_config.fatal("libunwind_headers='%s' is not a directory."
                                       % libunwind_headers)
             self.cxx.compile_flags += ['-I' + libunwind_headers]
-
-    def configure_compile_flags_exceptions(self):
-        pass
-
-    def configure_compile_flags_rtti(self):
-        pass
