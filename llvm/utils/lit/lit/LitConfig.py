@@ -67,6 +67,28 @@ class LitConfig(object):
         self.parallelism_groups = parallelism_groups
         self.echo_all_commands = echo_all_commands
 
+        self._suite_setup_callbacks = []
+        self._suite_teardown_callbacks = []
+    
+    def __getstate__(self):
+        # An instance of LitConfig may be shared between multiple processes
+        # when using parallelism, which requires pickling that instance.
+        # However, pickling function objects is not always possible (or, in this
+        # case, always impossible), so we remove the callbacks from
+        # pickled instances.
+        # This is okay, because we only set them and run them in the parent
+        # lit.py process. Accessing them from subprocesses would be weird,
+        # so it's not supported.
+        state = dict(self.__dict__)
+        del state['_suite_setup_callbacks']
+        del state['_suite_teardown_callbacks']
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self._suite_setup_callbacks = []
+        self._suite_teardown_callbacks = []
+
     @property
     def maxIndividualTestTime(self):
         """
@@ -159,6 +181,42 @@ class LitConfig(object):
             self.bashPath = ''
 
         return dir
+    
+    def suite_setup(self, callback):
+        '''
+        Adds the callback to the list of setup callbacks that will be run
+        before running the test suite.
+
+        Can be used as a decorator in lit configuration files like this:
+
+            @lit_config.suite_setup
+            def setup():
+                ...
+        '''
+        self._suite_setup_callbacks.append(callback)
+        return callback
+    
+    def suite_teardown(self, callback):
+        '''
+        Adds the callback to the list of teardown callbacks that will be run
+        after the test suite completes.
+
+        Can be used as a decorator in lit configuration files like this:
+
+            @lit_config.suite_teardown
+            def teardown():
+                ...
+        '''
+        self._suite_teardown_callbacks.append(callback)
+        return callback
+    
+    def run_suite_setup_callbacks(self):
+        for callback in self._suite_setup_callbacks:
+            callback()
+    
+    def run_suite_teardown_callbacks(self):
+        for callback in self._suite_teardown_callbacks:
+            callback()
 
     def _write_message(self, kind, message):
         # Get the file/line where this message was generated.

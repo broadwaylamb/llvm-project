@@ -58,12 +58,19 @@ class Run(object):
         timeout = self.timeout or one_week
         deadline = time.time() + timeout
 
-        self._execute(deadline)
+        try:
+            self.lit_config.run_suite_setup_callbacks()
+            self._execute(deadline)
+        finally:
+            self.lit_config.run_suite_teardown_callbacks()
 
         # Mark any tests that weren't run as UNRESOLVED.
         for test in self.tests:
             if test.result is None:
                 test.setResult(lit.Test.Result(lit.Test.UNRESOLVED, '', 0.0))
+    
+    def _execute(self, deadline):
+        raise NotImplementedError("Should be implemented in a subclass")
 
     # TODO(yln): as the comment says.. this is racing with the main thread waiting
     # for results
