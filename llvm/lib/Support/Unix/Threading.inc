@@ -219,7 +219,7 @@ void llvm::get_thread_name(SmallVectorImpl<char> &Name) {
   ::pthread_get_name_np(::pthread_self(), buf, len);
 
   Name.append(buf, buf + strlen(buf));
-#elif defined(__linux__)
+#elif defined(__linux__) || defined(__APPLE__)
 #if HAVE_PTHREAD_GETNAME_NP
   constexpr uint32_t len = get_max_thread_name_length_impl();
   char Buffer[len] = {'\0'};  // FIXME: working around MSan false positive.
