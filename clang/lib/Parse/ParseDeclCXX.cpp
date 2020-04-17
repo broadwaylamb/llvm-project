@@ -1411,19 +1411,22 @@ void Parser::ParseClassSpecifier(tok::TokenKind TagTokKind,
     return cutOffParsing();
   }
 
-  // C++03 [temp.explicit] 14.7.2/8:
-  //   The usual access checking rules do not apply to names used to specify
-  //   explicit instantiations.
+  // C++20 [temp.class.spec] 17.6.5/10:
+  //   The usual access checking rules do not apply to non-dependent names used
+  //   to specify template arguments of the simple-template-id of the partial
+  //   specialization
   //
-  // As an extension we do not perform access checking on the names used to
-  // specify explicit specializations either. This is important to allow
-  // specializing traits classes for private types.
+  // C++20 [temp.explicit] 17.8/6:
+  //   The usual access checking rules do not apply to names in a declaration
+  //   of an explicit instantiation or explicit specialization, with
+  //   the exception of names appearing in a function body, default argument,
+  //   base-clause, member-specification, enumerator-list, or static data member
+  //   or variable template initializer.
   //
   // Note that we don't suppress if this turns out to be an elaborated
   // type specifier.
   bool shouldDelayDiagsInTag =
-    (TemplateInfo.Kind == ParsedTemplateInfo::ExplicitInstantiation ||
-     TemplateInfo.Kind == ParsedTemplateInfo::ExplicitSpecialization);
+      TemplateInfo.Kind != ParsedTemplateInfo::NonTemplate;
   SuppressAccessChecks diagsFromTag(*this, shouldDelayDiagsInTag);
 
   ParsedAttributesWithRange attrs(AttrFactory);
@@ -1770,14 +1773,6 @@ void Parser::ParseClassSpecifier(tok::TokenKind TagTokKind,
     }
   }
 
-  // If this is an elaborated type specifier, and we delayed
-  // diagnostics before, just merge them into the current pool.
-  if (shouldDelayDiagsInTag) {
-    diagsFromTag.done();
-    if (TUK == Sema::TUK_Reference)
-      diagsFromTag.redelay();
-  }
-
   if (!Name && !TemplateId && (DS.getTypeSpecType() == DeclSpec::TST_error ||
                                TUK != Sema::TUK_Definition)) {
     if (DS.getTypeSpecType() != DeclSpec::TST_error) {
@@ -1948,6 +1943,14 @@ void Parser::ParseClassSpecifier(tok::TokenKind TagTokKind,
       TypeResult = Actions.ActOnDependentTag(getCurScope(), TagType, TUK,
                                              SS, Name, StartLoc, NameLoc);
     }
+  }
+
+  // If this is an elaborated type specifier, and we delayed
+  // diagnostics before, just merge them into the current pool.
+  if (shouldDelayDiagsInTag) {
+    diagsFromTag.done();
+    if (TUK == Sema::TUK_Reference)
+      diagsFromTag.redelay();
   }
 
   // If there is a body, parse it and inform the actions module.
