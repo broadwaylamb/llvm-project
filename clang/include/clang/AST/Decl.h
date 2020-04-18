@@ -3210,14 +3210,14 @@ public:
 
 /// Represents the declaration of a typedef-name via a C++11
 /// alias-declaration.
-class TypeAliasDecl : public TypedefNameDecl {
+class TypeAliasDecl : public TypedefNameDecl, public DeclContext {
   /// The template for which this is the pattern, if any.
   TypeAliasTemplateDecl *Template;
 
   TypeAliasDecl(ASTContext &C, DeclContext *DC, SourceLocation StartLoc,
                 SourceLocation IdLoc, IdentifierInfo *Id, TypeSourceInfo *TInfo)
       : TypedefNameDecl(TypeAlias, C, DC, StartLoc, IdLoc, Id, TInfo),
-        Template(nullptr) {}
+        DeclContext(TypeAlias), Template(nullptr) {}
 
 public:
   static TypeAliasDecl *Create(ASTContext &C, DeclContext *DC,

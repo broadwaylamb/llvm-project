@@ -1300,6 +1300,7 @@ public:
 ///   ExportDecl
 ///   BlockDecl
 ///   CapturedDecl
+///   TypeAliasDecl
 class DeclContext {
   /// For makeDeclVisibleInContextImpl
   friend class ASTDeclReader;
