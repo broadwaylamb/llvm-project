@@ -40,5 +40,32 @@ template class E<&A::staticFuncOverloaded>;
 template <int A::*> class G {};
 template class G<&A::field>;
 
-// As an extension, this rule is applied to explicit specializations as well.
 template <> class X::Y<A::C> {};
+
+namespace member_spec {
+
+  template <typename T>
+  struct X {
+    struct A {};
+    void f();
+    enum E : int;
+    static int var;
+  };
+
+  class Y {
+    using Z = int;
+  };
+
+  template <>
+  struct X<Y::Z>::A {};
+
+  template <>
+  void X<Y::Z>::f() {}
+
+  template <>
+  enum X<Y::Z>::E : int {};
+
+  template <>
+  int X<Y::Z>::var = 76;
+
+}

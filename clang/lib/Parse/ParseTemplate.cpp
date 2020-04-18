@@ -209,11 +209,14 @@ Decl *Parser::ParseSingleDeclarationAfterTemplate(
   MaybeParseCXX11Attributes(prefixAttrs);
 
   if (Tok.is(tok::kw_using)) {
+    ParsingDeclRAIIObject ParsingDeclRAII(*this, &DiagsFromTParams);
     auto usingDeclPtr = ParseUsingDirectiveOrDeclaration(Context, TemplateInfo, DeclEnd,
                                                          prefixAttrs);
     if (!usingDeclPtr || !usingDeclPtr.get().isSingleDecl())
       return nullptr;
-    return usingDeclPtr.get().getSingleDecl();
+    Decl *Decl = usingDeclPtr.get().getSingleDecl();
+    ParsingDeclRAII.complete(Decl);
+    return Decl;
   }
 
   // Parse the declaration specifiers, stealing any diagnostics from
