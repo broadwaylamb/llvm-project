@@ -1228,7 +1228,6 @@ DeclContext *DeclContext::getPrimaryContext() {
   case Decl::OMPDeclareReduction:
   case Decl::OMPDeclareMapper:
   case Decl::RequiresExprBody:
-  case Decl::TypeAlias:
     // There is only one DeclContext for these entities.
     return this;
 
