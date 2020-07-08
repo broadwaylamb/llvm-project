@@ -621,6 +621,7 @@ class Configuration(object):
         env_vars = ' '.join('%s=%s' % (k, pipes.quote(v)) for (k, v) in self.exec_env.items())
         exec_args = [
             '--execdir %T',
+            '--test-executable %t.exe',
             '--codesign_identity "{}"'.format(codesign_ident),
             '--env {}'.format(env_vars)
         ]
