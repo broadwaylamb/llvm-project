@@ -72,6 +72,7 @@ set(COMPILER_RT_BUILD_XRAY                  OFF CACHE BOOL "")
 set(COMPILER_RT_BUILD_LIBFUZZER             OFF CACHE BOOL "")
 set(COMPILER_RT_BUILD_PROFILE               OFF CACHE BOOL "")
 set(COMPILER_RT_DEFAULT_TARGET_ONLY         ON CACHE BOOL "")
+set(COMPILER_RT_INCLUDE_TESTS               ON CACHE BOOL "")
 
 set(LIBUNWIND_USE_COMPILER_RT               ON CACHE BOOL "")
 set(LIBUNWIND_TARGET_TRIPLE                 "${CMAKE_C_COMPILER_TARGET}" CACHE STRING "")
@@ -108,6 +109,10 @@ if(DEFINED REMOTE_TEST_HOST)
   set(DEFAULT_TEST_TARGET_INFO              "libcxx.test.target_info.LinuxRemoteTI")
 
   # Allow override with the custom values.
+  if(NOT DEFINED COMPILER_RT_EMULATOR)
+    set(COMPILER_RT_EMULATOR                "\\\"${Python3_EXECUTABLE}\\\" \\\"${LLVM_PROJECT_DIR}/libcxx/utils/ssh.py\\\" --execdir %%T --test-executable %%t --host ${REMOTE_TEST_USER}@${REMOTE_TEST_HOST} --" CACHE STRING "")
+  endif()
+  
   if(NOT DEFINED LIBUNWIND_TARGET_INFO)
     set(LIBUNWIND_TARGET_INFO               "${DEFAULT_TEST_TARGET_INFO}" CACHE STRING "")
   endif()
