@@ -5576,23 +5576,20 @@ void Parser::ParseDeclaratorInternal(Declarator &D,
         D.getContext() == DeclaratorContext::MemberContext;
     CXXScopeSpec SS;
 
-    {
-      // If this is an explicit specialization of a member of a class template,
-      // don't perform access checks in template parameters.
-      //
-      // See C++20 [temp.explicit] 17.8/6:
-      //   The usual access checking rules do not apply to names in
-      //   a declaration of an explicit instantiation or explicit
-      //   specialization, with the exception of names appearing in a function
-      //   body, default argument, base-clause, member-specification,
-      //   enumerator-list, or static data member or variable template
-      //   initializer.
-      SuppressAccessChecks diagsFromTag(*this);
+    // If this is an explicit instantiation/specialization of a member of
+    // a class template, don't perform access checks.
+    //
+    // See C++20 [temp.explicit] 17.8/6:
+    //   a declaration of an explicit instantiation or explicit
+    //   specialization, with the exception of names appearing in a function
+    //   body, default argument, base-clause, member-specification,
+    //   enumerator-list, or static data member or variable template
+    //   initializer.
+    SuppressAccessChecks diagsFromTag(*this, !D.getTemplateParameterLists().empty());
 
-      ParseOptionalCXXScopeSpecifier(SS, /*ObjectType=*/nullptr,
-                                     /*ObjectHasErrors=*/false,
-                                     EnteringContext);
-    }
+    ParseOptionalCXXScopeSpecifier(SS, /*ObjectType=*/nullptr,
+        /*ObjectHasErrors=*/false,
+                                   EnteringContext);
 
     if (SS.isNotEmpty()) {
       if (Tok.isNot(tok::star)) {

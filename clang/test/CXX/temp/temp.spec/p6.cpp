@@ -1,5 +1,4 @@
 // RUN: %clang_cc1 -fsyntax-only -verify %s
-// expected-no-diagnostics
 
 class X {
   template <typename T> class Y {};
@@ -44,23 +43,32 @@ template <> class X::Y<A::C> {};
 
 namespace member_spec {
 
+  struct A { void f(); };
+
   template <typename T>
   struct X {
     struct A {};
-    void f();
+    void f(T);
+    void g() {}
     enum E : int;
     static int var;
   };
 
   class Y {
     using Z = int;
+    using T = A; // expected-note {{declared private here}}
   };
 
   template <>
   struct X<Y::Z>::A {};
 
   template <>
-  void X<Y::Z>::f() {}
+  void X<Y::Z>::f(Y::Z) {}
+
+  template <typename T>
+  void X<T>::f(T) {}
+
+  template void X<Y::Z>::g();
 
   template <>
   enum X<Y::Z>::E : int {};
@@ -68,4 +76,26 @@ namespace member_spec {
   template <>
   int X<Y::Z>::var = 76;
 
+  void Y::T::f() {} // expected-error {{'T' is a private member of 'member_spec::Y'}}
+}
+
+namespace member_function_definition_of_class_template_specialization {
+
+  template<typename T> struct A;
+
+  class X {
+    struct Y {}; // expected-note {{declared private here}}
+  };
+
+  template<> struct A<X::Y> {
+    void f();
+    int g();
+  };
+
+  void A<X::Y>::f() {}
+
+  // A free function that returns a pointer to a field of A.
+  int A<X::Y>::* g() { // expected-error {{'Y' is a private member of 'member_function_definition_of_class_template_specialization::X'}}
+    return nullptr;
+  }
 }
